@@ -81,7 +81,7 @@ body{background:var(--bg);color:var(--t);font-family:system-ui,sans-serif;paddin
     <p>URL do Google Apps Script</p>
     <input id="c-gas" type="text" placeholder="https://script.google.com/macros/s/...">
     <p>Nome da aba na planilha</p>
-    <input id="c-tab" type="text" placeholder="📋 Lançamentos">
+    <input id="c-tab" type="text" placeholder="Lançamentos">
     <div class="tip">
       <strong style="color:var(--y)">Cole isso no Apps Script da sua planilha:</strong>
       <code>function doPost(e) {
@@ -153,7 +153,7 @@ try{entries=JSON.parse(localStorage.getItem("e")||"[]")}catch(e){}
   var s=document.getElementById("f-cat");
   CATS.forEach(function(c){var o=document.createElement("option");o.value=c;o.textContent=c;s.appendChild(o)});
   document.getElementById("c-gas").value=localStorage.getItem("gas")||"";
-  document.getElementById("c-tab").value=localStorage.getItem("tab")||"📋 Lançamentos";
+  document.getElementById("c-tab").value=localStorage.getItem("tab")||"Lançamentos";
   if(!localStorage.getItem("gas")) document.getElementById("cfg").classList.add("on");
   render();
 })();
@@ -172,7 +172,7 @@ function salvarCfg(){
   var g=L("c-gas").value.trim();
   if(!g){toast("Insira a URL do Apps Script","err");return}
   localStorage.setItem("gas",g);
-  localStorage.setItem("tab",L("c-tab").value.trim()||"📋 Lançamentos");
+  localStorage.setItem("tab",L("c-tab").value.trim()||"Lançamentos");
   L("cfg").classList.remove("on");
   toast("Configuração salva ✓","ok");
 }
@@ -204,7 +204,7 @@ function salvar(){
   var gasUrl=localStorage.getItem("gas")||"";
   if(!gasUrl){e.status="error";render();toast("Configure o Apps Script ⚙","tip");return}
 
-  var body=new URLSearchParams({tab:localStorage.getItem("tab")||"📋 Lançamentos",data:e.data,descricao:e.descricao,categoria:e.categoria,valor:e.valor,tipo:e.tipo,mes:e.mes});
+  var body=new URLSearchParams({tab:localStorage.getItem("tab")||"Lançamentos",data:e.data,descricao:e.descricao,categoria:e.categoria,valor:e.valor,tipo:e.tipo,mes:e.mes});
   fetch(gasUrl,{method:"POST",body:body,mode:"no-cors"})
     .then(function(){setTimeout(function(){e.status="synced";render();toast("Salvo na planilha ✓","ok")},1500)})
     .catch(function(){e.status="error";render();toast("Erro de rede — salvo localmente","err")});
