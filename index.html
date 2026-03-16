@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gasto RÃ¡pido">
+<title>Gasto RÃ¡pido</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --border: #2a2a40;
+    --green: #00e5a0;
+    --green-dim: #00b37d;
+    --red: #ff4d6d;
+    --yellow: #ffd166;
+    --blue: #4cc9f0;
+    --purple: #7b5ea7;
+    --text: #e8e8f0;
+    --muted: #6b6b8a;
+    --font-display: 'Syne', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-display);
+    min-height: 100dvh;
+    overflow-x: hidden;
+    padding-top: var(--safe-top);
+    padding-bottom: var(--safe-bottom);
+  }
+
+  /* Grain overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: .5;
+  }
+
+  /* ââ LAYOUT ââ */
+  .app {
+    max-width: 440px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px 24px;
+  }
+
+  /* ââ HEADER ââ */
+  .header {
+    padding: 20px 0 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .logo span { color: var(--muted); }
+  .header-meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    line-height: 1.6;
+  }
+
+  /* ââ CONFIG BANNER ââ */
+  .config-banner {
+    background: linear-gradient(135deg, #1a1a28, #12121a);
+    border: 1px solid var(--yellow);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--yellow);
+    display: none;
+  }
+  .config-banner.show { display: block; }
+  .config-banner strong { display: block; margin-bottom: 6px; font-size: 13px; }
+  .config-banner input, .config-banner select {
+    width: 100%; margin-top: 6px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 8px 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+  .config-save {
+    width: 100%; margin-top: 10px;
+    background: var(--yellow);
+    color: var(--bg);
+    border: none; border-radius: 8px;
+    padding: 10px;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* ââ MIC BUTTON ââ */
+  .mic-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 0 20px;
+    flex-shrink: 0;
+  }
+
+  .mic-ring {
+    position: relative;
+    width: 160px; height: 160px;
+  }
+  .mic-ring::before, .mic-ring::after {
+    content: '';
+    position: absolute; inset: -12px;
+    border-radius: 50%;
+    border: 1px solid var(--green);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .mic-ring.active::before {
+    opacity: .3;
+    animation: pulse-ring 1.5s ease-out infinite;
+  }
+  .mic-ring.active::after {
+    opacity: .15;
+    animation: pulse-ring 1.5s ease-out infinite .5s;
+  }
+
+  @keyframes pulse-ring {
+    0% { transform: scale(1); opacity: .3; }
+    100% { transform: scale(1.4); opacity: 0; }
+  }
+
+  .mic-btn {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 8px;
+    transition: all .2s cubic-bezier(.34,1.56,.64,1);
+    position: relative;
+    overflow: hidden;
+  }
+  .mic-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at center, var(--green) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .mic-btn:active { transform: scale(.95); }
+  .mic-btn.recording {
+    border-color: var(--green);
+    box-shadow: 0 0 40px rgba(0,229,160,.2), inset 0 0 30px rgba(0,229,160,.05);
+  }
+  .mic-btn.recording::before { opacity: .08; }
+  .mic-btn.processing {
+    border-color: var(--yellow);
+    box-shadow: 0 0 40px rgba(255,209,102,.2);
+    animation: processing-pulse .8s ease-in-out infinite alternate;
+  }
+  @keyframes processing-pulse {
+    from { box-shadow: 0 0 20px rgba(255,209,102,.15); }
+    to   { box-shadow: 0 0 50px rgba(255,209,102,.35); }
+  }
+
+  .mic-icon {
+    font-size: 48px;
+    transition: transform .2s;
+    position: relative; z-index: 1;
+  }
+  .mic-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    transition: color .2s;
+    position: relative; z-index: 1;
+  }
+  .mic-btn.recording .mic-label { color: var(--green); }
+  .mic-btn.processing .mic-label { color: var(--yellow); }
+
+  /* Waveform */
+  .waveform {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 40px;
+    opacity: 0;
+    transition: opacity .3s;
+  }
+  .waveform.active { opacity: 1; }
+  .wave-bar {
+    width: 3px;
+    background: var(--green);
+    border-radius: 2px;
+    height: 6px;
+    transition: height .1s;
+  }
+  .waveform.active .wave-bar {
+    animation: wave-anim .6s ease-in-out infinite;
+  }
+  .wave-bar:nth-child(1) { animation-delay: 0s; }
+  .wave-bar:nth-child(2) { animation-delay: .08s; }
+  .wave-bar:nth-child(3) { animation-delay: .16s; }
+  .wave-bar:nth-child(4) { animation-delay: .24s; }
+  .wave-bar:nth-child(5) { animation-delay: .32s; }
+  .wave-bar:nth-child(6) { animation-delay: .24s; }
+  .wave-bar:nth-child(7) { animation-delay: .16s; }
+  .wave-bar:nth-child(8) { animation-delay: .08s; }
+  .wave-bar:nth-child(9) { animation-delay: 0s; }
+  @keyframes wave-anim {
+    0%, 100% { height: 4px; }
+    50% { height: 28px; }
+  }
+
+  /* ââ STATUS / PREVIEW CARD ââ */
+  .status-area {
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .status-hint {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .status-hint em { color: var(--text); font-style: normal; }
+
+  /* Preview card */
+  .preview-card {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 16px;
+    display: none;
+    animation: card-in .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .preview-card.show { display: block; }
+  @keyframes card-in {
+    from { transform: translateY(12px) scale(.97); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
+  }
+  .preview-card .p-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .preview-card .p-row:last-child { border-bottom: none; }
+  .preview-card .p-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+  }
+  .preview-card .p-value { font-weight: 600; color: var(--text); }
+  .preview-card .p-value.money { color: var(--green); font-size: 18px; }
+  .preview-card .p-value.cat { color: var(--blue); }
+  .preview-card .p-value.loc {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--purple);
+    text-align: right;
+    max-width: 180px;
+  }
+
+  .preview-actions {
+    display: flex; gap: 10px;
+    margin-top: 14px;
+  }
+  .btn-confirm {
+    flex: 1;
+    background: var(--green);
+    color: var(--bg);
+    border: none; border-radius: 10px;
+    padding: 12px;
+    font-family: var(--font-display);
+    font-weight: 800; font-size: 13px;
+    letter-spacing: .05em;
+    cursor: pointer;
+    transition: transform .15s, opacity .15s;
+  }
+  .btn-confirm:active { transform: scale(.97); opacity: .85; }
+  .btn-confirm.loading { opacity: .6; pointer-events: none; }
+  .btn-discard {
+    width: 48px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 18px;
+    transition: color .15s;
+  }
+  .btn-discard:hover { color: var(--red); }
+
+  /* Edit fields */
+  .editable {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--border);
+    color: var(--text);
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    text-align: right;
+    outline: none;
+    width: 140px;
+  }
+  .editable:focus { border-bottom-color: var(--green); }
+  select.editable {
+    -webkit-appearance: none;
+    cursor: pointer;
+  }
+
+  /* ââ HISTORY ââ */
+  .section-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 24px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+  }
+
+  .entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    animation: entry-in .25s ease-out;
+  }
+  @keyframes entry-in {
+    from { transform: translateX(-8px); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+  .entry-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .entry-info { flex: 1; min-width: 0; }
+  .entry-desc {
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .entry-meta {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    display: flex;
+    gap: 8px;
+  }
+  .entry-meta .cat-badge {
+    color: var(--blue);
+    background: rgba(76,201,240,.1);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+  .entry-meta .loc-badge {
+    color: var(--purple);
+  }
+  .entry-amount {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+  .entry-amount.expense { color: var(--red); }
+  .entry-amount.income  { color: var(--green); }
+
+  .entry-status {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .entry-status.synced  { background: var(--green); }
+  .entry-status.pending { background: var(--yellow); }
+  .entry-status.error   { background: var(--red); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 32px 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 2;
+  }
+  .empty-state .big { font-size: 36px; display: block; margin-bottom: 8px; }
+
+  /* ââ TOAST ââ */
+  .toast {
+    position: fixed;
+    bottom: calc(24px + var(--safe-bottom));
+    left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1), opacity .3s;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .toast.success { border-color: var(--green); color: var(--green); }
+  .toast.error   { border-color: var(--red);   color: var(--red); }
+  .toast.info    { border-color: var(--yellow); color: var(--yellow); }
+
+  /* ââ SETTINGS GEAR ââ */
+  .settings-btn {
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-size: 18px;
+    transition: color .2s, transform .3s;
+    padding: 4px;
+  }
+  .settings-btn:hover { color: var(--text); transform: rotate(45deg); }
+
+  /* ââ GPS indicator ââ */
+  .gps-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+    display: inline-block;
+    margin-left: 6px;
+    transition: background .3s;
+  }
+  .gps-dot.active { background: var(--green); animation: gps-blink 2s infinite; }
+  @keyframes gps-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .3; }
+  }
+
+  /* Scrollable history */
+  .history-scroll {
+    overflow-y: auto;
+    max-height: calc(100dvh - 520px);
+    padding-bottom: 8px;
+  }
+  .history-scroll::-webkit-scrollbar { width: 3px; }
+  .history-scroll::-webkit-scrollbar-track { background: transparent; }
+  .history-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="logo">Gasto<span> /</span> RÃ¡pido</div>
+      <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:3px" id="today-date"></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted)">
+        GPS<span class="gps-dot" id="gps-dot"></span>
+      </span>
+      <button class="settings-btn" onclick="toggleConfig()">â</button>
+    </div>
+  </div>
+
+  <!-- CONFIG BANNER -->
+  <div class="config-banner" id="config-banner">
+    <strong>â ConfiguraÃ§Ã£o inicial</strong>
+    <label style="font-size:11px;display:block;margin-top:8px">Chave da API Anthropic (Claude)</label>
+    <input type="password" id="cfg-anthropic" placeholder="sk-ant-..." />
+
+    <label style="font-size:11px;display:block;margin-top:8px">Google Sheets â ID da planilha</label>
+    <input type="text" id="cfg-sheet-id" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" />
+
+    <label style="font-size:11px;display:block;margin-top:8px">Nome da aba de destino</label>
+    <input type="text" id="cfg-sheet-tab" placeholder="ð LanÃ§amentos" value="ð LanÃ§amentos" />
+
+    <label style="font-size:11px;display:block;margin-top:8px">Google Apps Script URL (Web App)</label>
+    <input type="text" id="cfg-gas-url" placeholder="https://script.google.com/macros/s/..." />
+
+    <button class="config-save" onclick="saveConfig()">Salvar configuraÃ§Ã£o</button>
+    <div style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.7">
+      ð¡ Veja as instruÃ§Ãµes abaixo para obter a Apps Script URL
+    </div>
+  </div>
+
+  <!-- MIC ZONE -->
+  <div class="mic-zone">
+    <div class="mic-ring" id="mic-ring">
+      <button class="mic-btn" id="mic-btn" onclick="toggleRecording()">
+        <span class="mic-icon" id="mic-icon">ð</span>
+        <span class="mic-label" id="mic-label">Toque para falar</span>
+      </button>
+    </div>
+
+    <div class="waveform" id="waveform">
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div><div class="wave-bar"></div>
+      <div class="wave-bar"></div>
+    </div>
+  </div>
+
+  <!-- STATUS / PREVIEW -->
+  <div class="status-area" id="status-area">
+    <p class="status-hint">
+      Diga algo como:<br>
+      <em>"gastei 45 reais no iFood"</em> ou <em>"recebi 800 de pro-labore"</em>
+    </p>
+  </div>
+
+  <div class="preview-card" id="preview-card">
+    <div class="p-row">
+      <span class="p-label">DescriÃ§Ã£o</span>
+      <input class="editable p-value" id="p-desc" type="text" />
+    </div>
+    <div class="p-row">
+      <span class="p-label">Valor</span>
+      <input class="editable p-value money" id="p-value" type="number" step="0.01" />
+    </div>
+    <div class="p-row">
+      <span class="p-label">Categoria</span>
+      <select class="editable p-value cat" id="p-cat"></select>
+    </div>
+    <div class="p-row">
+      <span class="p-label">Tipo</span>
+      <select class="editable p-value" id="p-tipo">
+        <option>SaÃ­da</option><option>Entrada</option>
+      </select>
+    </div>
+    <div class="p-row">
+      <span class="p-label">Data</span>
+      <input class="editable p-value" id="p-date" type="date" />
+    </div>
+    <div class="p-row" id="p-loc-row" style="display:none">
+      <span class="p-label">ð Local</span>
+      <span class="p-value loc" id="p-loc">â</span>
+    </div>
+    <div class="preview-actions">
+      <button class="btn-confirm" id="btn-confirm" onclick="confirmEntry()">â Salvar no Sheets</button>
+      <button class="btn-discard" onclick="discardEntry()">â</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="section-title" id="history-label">Hoje</div>
+  <div class="history-scroll">
+    <div class="history-list" id="history-list">
+      <div class="empty-state">
+        <span class="big">ð</span>
+        Nenhum lanÃ§amento ainda.<br>Toque no microfone e fale!
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ââ CONFIG âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+const CATEGORIAS = [
+  "SalÃ¡rio","Saldo Anterior","Rendimentos","Aluguel (Rec.)","AuxÃ­lio",
+  "Moradia","Transporte","Lazer","SaÃºde","EducaÃ§Ã£o","Investimentos",
+  "Trabalho","AlimentaÃ§Ã£o - Ifood","AlimentaÃ§Ã£o - Supermercado",
+  "AlimentaÃ§Ã£o - Restaurantes","Outros","Presente",
+  "Lazer - Assinaturas","Roupas","Tarifas BancÃ¡rias"
+];
+
+const CATEGORY_ICONS = {
+  "SalÃ¡rio":"ð¼","Saldo Anterior":"ð¦","Rendimentos":"ð","Aluguel (Rec.)":"ð ",
+  "AuxÃ­lio":"ð¤","Moradia":"ð¡","Transporte":"ð","Lazer":"ð","SaÃºde":"ð",
+  "EducaÃ§Ã£o":"ð","Investimentos":"ð¹","Trabalho":"ð","AlimentaÃ§Ã£o - Ifood":"ðµ",
+  "AlimentaÃ§Ã£o - Supermercado":"ð","AlimentaÃ§Ã£o - Restaurantes":"ð½",
+  "Outros":"ð¦","Presente":"ð","Lazer - Assinaturas":"ðº","Roupas":"ð",
+  "Tarifas BancÃ¡rias":"ð§"
+};
+
+function getCfg(k){ return localStorage.getItem('gasto_'+k)||''; }
+function setCfg(k,v){ localStorage.setItem('gasto_'+k,v); }
+
+// ââ STATE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+let isRecording = false;
+let mediaRecorder = null;
+let audioChunks = [];
+let currentCoords = null;
+let entries = JSON.parse(localStorage.getItem('gasto_entries')||'[]');
+
+// ââ INIT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+document.addEventListener('DOMContentLoaded', () => {
+  // Date
+  const now = new Date();
+  document.getElementById('today-date').textContent =
+    now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'short'});
+
+  // Category select
+  const sel = document.getElementById('p-cat');
+  CATEGORIAS.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = c;
+    sel.appendChild(o);
+  });
+
+  // Default date
+  document.getElementById('p-date').value = now.toISOString().split('T')[0];
+
+  // GPS warm-up
+  startGPS();
+
+  // Config check
+  if (!getCfg('anthropic') || !getCfg('gas_url')) {
+    document.getElementById('config-banner').classList.add('show');
+  }
+
+  // Render history
+  renderHistory();
+});
+
+// ââ GPS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function startGPS() {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.watchPosition(
+    pos => {
+      currentCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      document.getElementById('gps-dot').classList.add('active');
+    },
+    () => { document.getElementById('gps-dot').classList.remove('active'); },
+    { enableHighAccuracy: true, maximumAge: 30000, timeout: 10000 }
+  );
+}
+
+// ââ CONFIG âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function toggleConfig() {
+  const b = document.getElementById('config-banner');
+  b.classList.toggle('show');
+  if (b.classList.contains('show')) {
+    document.getElementById('cfg-anthropic').value = getCfg('anthropic');
+    document.getElementById('cfg-sheet-id').value  = getCfg('sheet_id');
+    document.getElementById('cfg-sheet-tab').value = getCfg('sheet_tab') || 'ð LanÃ§amentos';
+    document.getElementById('cfg-gas-url').value   = getCfg('gas_url');
+  }
+}
+function saveConfig() {
+  setCfg('anthropic',  document.getElementById('cfg-anthropic').value.trim());
+  setCfg('sheet_id',   document.getElementById('cfg-sheet-id').value.trim());
+  setCfg('sheet_tab',  document.getElementById('cfg-sheet-tab').value.trim());
+  setCfg('gas_url',    document.getElementById('cfg-gas-url').value.trim());
+  document.getElementById('config-banner').classList.remove('show');
+  showToast('ConfiguraÃ§Ã£o salva â', 'success');
+}
+
+// ââ RECORDING âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+async function toggleRecording() {
+  if (isRecording) { stopRecording(); return; }
+  const apiKey = getCfg('anthropic');
+  if (!apiKey) { toggleConfig(); showToast('Configure a API key primeiro', 'info'); return; }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream, { mimeType: getSupportedMimeType() });
+    audioChunks = [];
+    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = () => { stream.getTracks().forEach(t => t.stop()); processAudio(); };
+    mediaRecorder.start(100);
+    isRecording = true;
+    setRecordingUI(true);
+  } catch(e) {
+    showToast('Microfone nÃ£o permitido', 'error');
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && isRecording) { mediaRecorder.stop(); isRecording = false; }
+}
+
+function getSupportedMimeType() {
+  const types = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'];
+  return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
+}
+
+function setRecordingUI(recording) {
+  const btn  = document.getElementById('mic-btn');
+  const ring = document.getElementById('mic-ring');
+  const lbl  = document.getElementById('mic-label');
+  const icon = document.getElementById('mic-icon');
+  const wf   = document.getElementById('waveform');
+  btn.classList.toggle('recording', recording);
+  ring.classList.toggle('active', recording);
+  wf.classList.toggle('active', recording);
+  icon.textContent  = recording ? 'â¹' : 'ð';
+  lbl.textContent   = recording ? 'Toque para parar' : 'Toque para falar';
+}
+
+function setProcessingUI() {
+  const btn  = document.getElementById('mic-btn');
+  const icon = document.getElementById('mic-icon');
+  const lbl  = document.getElementById('mic-label');
+  const wf   = document.getElementById('waveform');
+  btn.classList.remove('recording'); btn.classList.add('processing');
+  document.getElementById('mic-ring').classList.remove('active');
+  wf.classList.remove('active');
+  icon.textContent = 'â³'; lbl.textContent = 'Interpretandoâ¦';
+}
+
+function resetMicUI() {
+  const btn  = document.getElementById('mic-btn');
+  const icon = document.getElementById('mic-icon');
+  const lbl  = document.getElementById('mic-label');
+  btn.classList.remove('recording','processing');
+  icon.textContent = 'ð'; lbl.textContent = 'Toque para falar';
+}
+
+// ââ PROCESS AUDIO â CLAUDE âââââââââââââââââââââââââââââââââââââââââââââââââ
+async function processAudio() {
+  setProcessingUI();
+  document.getElementById('status-area').innerHTML =
+    '<p class="status-hint">ð§  Interpretando sua falaâ¦</p>';
+
+  const blob = new Blob(audioChunks, { type: audioChunks[0]?.type || 'audio/webm' });
+
+  try {
+    // Transcribe via Web Speech API fallback / or use Whisper if available
+    // Since we can't call Whisper directly without server, we use SpeechRecognition
+    // for transcription and then send text to Claude
+    throw new Error('use_speech_recognition');
+  } catch(e) {
+    // Use Web Speech API for transcription on iPhone
+    useSpeechRecognitionFlow();
+  }
+}
+
+// ââ WEB SPEECH RECOGNITION (iPhone Safari native) âââââââââââââââââââââââââ
+function useSpeechRecognitionFlow() {
+  resetMicUI();
+  document.getElementById('status-area').innerHTML =
+    '<p class="status-hint">Toque e <em>fale</em> â o iPhone vai transcrever</p>';
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    // Fallback: manual text input
+    showManualInput();
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'pt-BR';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  const btn = document.getElementById('mic-btn');
+  const icon = document.getElementById('mic-icon');
+  const lbl  = document.getElementById('mic-label');
+  const ring = document.getElementById('mic-ring');
+  const wf   = document.getElementById('waveform');
+
+  btn.classList.add('recording');
+  ring.classList.add('active');
+  wf.classList.add('active');
+  icon.textContent = 'â¹'; lbl.textContent = 'Ouvindoâ¦';
+
+  // Override click to stop
+  btn.onclick = () => { recognition.stop(); btn.onclick = toggleRecording; };
+
+  recognition.onresult = async (event) => {
+    const transcript = event.results[0][0].transcript;
+    resetMicUI();
+    btn.onclick = toggleRecording;
+    await sendToClaudeForParsing(transcript);
+  };
+
+  recognition.onerror = () => {
+    resetMicUI();
+    btn.onclick = toggleRecording;
+    showToast('NÃ£o consegui ouvir. Tente novamente.', 'error');
+    document.getElementById('status-area').innerHTML =
+      '<p class="status-hint">Diga algo como:<br><em>"gastei 45 reais no iFood"</em></p>';
+  };
+
+  recognition.onend = () => {
+    btn.classList.remove('recording');
+    ring.classList.remove('active');
+    wf.classList.remove('active');
+  };
+
+  recognition.start();
+}
+
+// ââ MANUAL INPUT FALLBACK ââââââââââââââââââââââââââââââââââââââââââââââââââ
+function showManualInput() {
+  document.getElementById('status-area').innerHTML = `
+    <div style="width:100%">
+      <input id="manual-input" type="text"
+        placeholder="Digite: gastei 45 no iFood..."
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);
+               border-radius:10px;padding:12px 14px;color:var(--text);
+               font-family:var(--font-display);font-size:14px;outline:none"
+        onkeydown="if(event.key==='Enter')sendManual()"
+      />
+      <button onclick="sendManual()" style="width:100%;margin-top:8px;
+        background:var(--green);color:var(--bg);border:none;border-radius:10px;
+        padding:10px;font-family:var(--font-display);font-weight:800;font-size:13px;cursor:pointer">
+        Interpretar â
+      </button>
+    </div>`;
+  setTimeout(() => document.getElementById('manual-input')?.focus(), 100);
+}
+async function sendManual() {
+  const input = document.getElementById('manual-input');
+  if (!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  document.getElementById('status-area').innerHTML =
+    '<p class="status-hint">ð§  Interpretandoâ¦</p>';
+  await sendToClaudeForParsing(text);
+}
+
+// ââ CLAUDE PARSING âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+async function sendToClaudeForParsing(transcript) {
+  const apiKey = getCfg('anthropic');
+  const today  = new Date().toISOString().split('T')[0];
+
+  document.getElementById('status-area').innerHTML =
+    `<p class="status-hint">ð§  Interpretando: <em>"${transcript}"</em>â¦</p>`;
+
+  const systemPrompt = `VocÃª Ã© um assistente de controle financeiro pessoal brasileiro.
+O usuÃ¡rio vai dizer algo sobre um gasto ou recebimento.
+Extraia as informaÃ§Ãµes e retorne APENAS um JSON vÃ¡lido (sem markdown, sem explicaÃ§Ã£o) com:
+{
+  "descricao": "descriÃ§Ã£o resumida",
+  "valor": 0.00,
+  "categoria": "uma das categorias abaixo",
+  "tipo": "SaÃ­da ou Entrada",
+  "data": "YYYY-MM-DD"
+}
+
+Categorias disponÃ­veis: ${CATEGORIAS.join(', ')}
+
+Regras:
+- Se nÃ£o mencionar data, use hoje: ${today}
+- valor sempre nÃºmero positivo
+- tipo "Entrada" apenas para salÃ¡rio/recebimento/renda
+- Escolha a categoria mais especÃ­fica possÃ­vel
+- descricao: mÃ¡ximo 40 caracteres, capitalize a primeira letra
+- Se o usuÃ¡rio disser "ifood", "delivery", "rappi" â "AlimentaÃ§Ã£o - Ifood"
+- "gasolina", "combustÃ­vel", "posto", "pedÃ¡gio", "estacionamento", "Uber", "99", "Ã´nibus" â "Transporte"
+- "netflix", "spotify", "prime", "youtube premium", "apple", "icloud" â "Lazer - Assinaturas"
+- "mercado", "supermercado" â "AlimentaÃ§Ã£o - Supermercado"
+- "farmÃ¡cia", "remÃ©dio", "mÃ©dico", "consulta" â "SaÃºde"
+- "aluguel", "condomÃ­nio", "iptu", "luz", "Ã¡gua", "internet", "claro", "vivo" â "Moradia"`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: transcript }]
+      })
+    });
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+
+    const raw  = data.content[0].text.trim();
+    const json = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    showPreview(json);
+  } catch(err) {
+    console.error(err);
+    resetMicUI();
+    showToast('Erro ao interpretar. Tente novamente.', 'error');
+    document.getElementById('status-area').innerHTML =
+      '<p class="status-hint">Diga algo como:<br><em>"gastei 45 reais no iFood"</em></p>';
+  }
+}
+
+// ââ PREVIEW ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function showPreview(data) {
+  document.getElementById('p-desc').value  = data.descricao || '';
+  document.getElementById('p-value').value = data.valor     || '';
+  document.getElementById('p-date').value  = data.data      || new Date().toISOString().split('T')[0];
+  document.getElementById('p-tipo').value  = data.tipo      || 'SaÃ­da';
+
+  const sel = document.getElementById('p-cat');
+  for (let o of sel.options) if (o.value === data.categoria) { sel.value = data.categoria; break; }
+
+  // GPS
+  if (currentCoords) {
+    const locRow = document.getElementById('p-loc-row');
+    locRow.style.display = 'flex';
+    document.getElementById('p-loc').textContent =
+      `${currentCoords.lat.toFixed(5)}, ${currentCoords.lng.toFixed(5)}`;
+  }
+
+  document.getElementById('status-area').style.display = 'none';
+  document.getElementById('preview-card').classList.add('show');
+  resetMicUI();
+}
+
+function discardEntry() {
+  document.getElementById('preview-card').classList.remove('show');
+  document.getElementById('status-area').style.display = 'flex';
+  document.getElementById('status-area').innerHTML =
+    '<p class="status-hint">Diga algo como:<br><em>"gastei 45 reais no iFood"</em></p>';
+}
+
+// ââ CONFIRM & SEND TO SHEETS âââââââââââââââââââââââââââââââââââââââââââââââ
+async function confirmEntry() {
+  const entry = {
+    data:      document.getElementById('p-date').value,
+    descricao: document.getElementById('p-desc').value,
+    categoria: document.getElementById('p-cat').value,
+    valor:     parseFloat(document.getElementById('p-value').value),
+    tipo:      document.getElementById('p-tipo').value,
+    lat:       currentCoords?.lat || null,
+    lng:       currentCoords?.lng || null,
+    ts:        Date.now(),
+    id:        Math.random().toString(36).slice(2,9)
+  };
+
+  const btn = document.getElementById('btn-confirm');
+  btn.classList.add('loading');
+  btn.textContent = 'â³ Enviandoâ¦';
+
+  // Add to local history immediately
+  entry.status = 'pending';
+  entries.unshift(entry);
+  saveEntries();
+  renderHistory();
+  discardEntry();
+
+  // Send to Google Sheets via Apps Script
+  const gasUrl = getCfg('gas_url');
+  if (!gasUrl) {
+    entry.status = 'error';
+    saveEntries(); renderHistory();
+    showToast('Configure o Apps Script URL', 'info');
+    btn.classList.remove('loading'); btn.textContent = 'â Salvar no Sheets';
+    return;
+  }
+
+  try {
+    const formData = new URLSearchParams({
+      data:      entry.data,
+      descricao: entry.descricao,
+      categoria: entry.categoria,
+      valor:     entry.valor,
+      tipo:      entry.tipo,
+      lat:       entry.lat || '',
+      lng:       entry.lng || '',
+      mes:       getMesFromDate(entry.data)
+    });
+
+    await fetch(gasUrl, { method: 'POST', body: formData, mode: 'no-cors' });
+
+    // no-cors means we can't read response, assume success after 2s
+    setTimeout(() => {
+      entry.status = 'synced';
+      saveEntries(); renderHistory();
+      showToast('Salvo no Google Sheets â', 'success');
+    }, 1500);
+
+  } catch(e) {
+    entry.status = 'error';
+    saveEntries(); renderHistory();
+    showToast('Erro ao enviar. Salvo localmente.', 'error');
+  }
+
+  btn.classList.remove('loading');
+  btn.textContent = 'â Salvar no Sheets';
+}
+
+function getMesFromDate(dateStr) {
+  const meses = ["Janeiro","Fevereiro","MarÃ§o","Abril","Maio","Junho",
+                 "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+  return meses[new Date(dateStr + 'T12:00:00').getMonth()];
+}
+
+// ââ RENDER HISTORY âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  if (!entries.length) {
+    list.innerHTML = `<div class="empty-state">
+      <span class="big">ð</span>
+      Nenhum lanÃ§amento ainda.<br>Toque no microfone e fale!
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = entries.slice(0, 20).map(e => {
+    const icon    = CATEGORY_ICONS[e.categoria] || 'ð¦';
+    const amount  = `R$ ${Math.abs(e.valor).toFixed(2).replace('.',',')}`;
+    const isInc   = e.tipo === 'Entrada';
+    const dateStr = new Date(e.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
+    const locBadge = (e.lat && e.lng) ? `<span class="loc-badge">ð</span>` : '';
+    const statusClass = e.status || 'pending';
+    return `
+    <div class="entry-card">
+      <div class="entry-icon">${icon}</div>
+      <div class="entry-info">
+        <div class="entry-desc">${e.descricao}</div>
+        <div class="entry-meta">
+          <span>${dateStr}</span>
+          <span class="cat-badge">${e.categoria}</span>
+          ${locBadge}
+        </div>
+      </div>
+      <div class="entry-amount ${isInc?'income':'expense'}">${isInc?'+':'â'} ${amount}</div>
+      <div class="entry-status ${statusClass}" title="${statusClass}"></div>
+    </div>`;
+  }).join('');
+}
+
+function saveEntries() {
+  localStorage.setItem('gasto_entries', JSON.stringify(entries.slice(0,100)));
+}
+
+// ââ TOAST ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+
+<!-- SETUP INSTRUCTIONS (hidden by default, shown when config open) -->
+<div style="display:none" id="instructions">
+<!--
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+â         INSTRUÃÃES â GOOGLE APPS SCRIPT                      â
+â âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ£
+â                                                              â
+â  1. Abra sua planilha no Google Sheets                       â
+â  2. ExtensÃµes â Apps Script                                  â
+â  3. Cole o cÃ³digo abaixo no editor                           â
+â  4. Salve â Implantar â Novo ImplantaÃ§Ã£o                     â
+â     Tipo: Web App                                            â
+â     Executar como: Eu mesmo                                  â
+â     Acesso: Qualquer pessoa                                  â
+â  5. Copie a URL gerada â cole em "Apps Script URL" no app    â
+â                                                              â
+â âââ CÃDIGO DO APPS SCRIPT âââââââââââââââââââââââââââââââââââ
+â                                                              â
+â function doPost(e) {                                         â
+â   const ss  = SpreadsheetApp.getActiveSpreadsheet();         â
+â   const tab  = e.parameter.tab || 'ð LanÃ§amentos';          â
+â   const sheet = ss.getSheetByName(tab)                       â
+â              || ss.getSheets()[0];                           â
+â   const row = [                                              â
+â     e.parameter.data,                                        â
+â     e.parameter.descricao,                                   â
+â     e.parameter.categoria,                                   â
+â     parseFloat(e.parameter.valor)||0,                        â
+â     e.parameter.tipo,                                        â
+â     e.parameter.mes,                                         â
+â     e.parameter.lat||'',                                     â
+â     e.parameter.lng||''                                      â
+â   ];                                                         â
+â   sheet.appendRow(row);                                      â
+â   return ContentService                                      â
+â     .createTextOutput('ok')                                  â
+â     .setMimeType(ContentService.MimeType.TEXT);              â
+â }                                                            â
+â                                                              â
+ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+-->
+</div>
+
+</body>
+</html>
