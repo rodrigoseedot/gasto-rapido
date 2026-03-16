@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Gasto RÃ¡pido">
-<title>Gasto RÃ¡pido</title>
+<meta name="apple-mobile-web-app-title" content="Gasto Rápido">
+<title>Gasto Rápido</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -49,7 +49,7 @@
     pointer-events: none; z-index: 9999; opacity: .5;
   }
 
-  /* ââ LAYOUT ââ */
+  /* ── LAYOUT ── */
   .app {
     max-width: 440px;
     margin: 0 auto;
@@ -59,7 +59,7 @@
     padding: 0 20px 24px;
   }
 
-  /* ââ HEADER ââ */
+  /* ── HEADER ── */
   .header {
     padding: 20px 0 16px;
     display: flex;
@@ -82,7 +82,7 @@
     line-height: 1.6;
   }
 
-  /* ââ CONFIG BANNER ââ */
+  /* ── CONFIG BANNER ── */
   .config-banner {
     background: linear-gradient(135deg, #1a1a28, #12121a);
     border: 1px solid var(--yellow);
@@ -116,7 +116,7 @@
     cursor: pointer;
   }
 
-  /* ââ MIC BUTTON ââ */
+  /* ── MIC BUTTON ── */
   .mic-zone {
     display: flex;
     flex-direction: column;
@@ -239,7 +239,7 @@
     50% { height: 28px; }
   }
 
-  /* ââ STATUS / PREVIEW CARD ââ */
+  /* ── STATUS / PREVIEW CARD ── */
   .status-area {
     min-height: 60px;
     display: flex;
@@ -346,7 +346,7 @@
     cursor: pointer;
   }
 
-  /* ââ HISTORY ââ */
+  /* ── HISTORY ── */
   .section-title {
     font-size: 10px;
     font-weight: 700;
@@ -447,7 +447,7 @@
   }
   .empty-state .big { font-size: 36px; display: block; margin-bottom: 8px; }
 
-  /* ââ TOAST ââ */
+  /* ── TOAST ── */
   .toast {
     position: fixed;
     bottom: calc(24px + var(--safe-bottom));
@@ -469,7 +469,7 @@
   .toast.error   { border-color: var(--red);   color: var(--red); }
   .toast.info    { border-color: var(--yellow); color: var(--yellow); }
 
-  /* ââ SETTINGS GEAR ââ */
+  /* ── SETTINGS GEAR ── */
   .settings-btn {
     background: none; border: none; cursor: pointer;
     color: var(--muted); font-size: 18px;
@@ -478,7 +478,7 @@
   }
   .settings-btn:hover { color: var(--text); transform: rotate(45deg); }
 
-  /* ââ GPS indicator ââ */
+  /* ── GPS indicator ── */
   .gps-dot {
     width: 8px; height: 8px;
     border-radius: 50%;
@@ -511,35 +511,35 @@
   <!-- HEADER -->
   <div class="header">
     <div>
-      <div class="logo">Gasto<span> /</span> RÃ¡pido</div>
+      <div class="logo">Gasto<span> /</span> Rápido</div>
       <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);margin-top:3px" id="today-date"></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <span style="font-family:var(--font-mono);font-size:10px;color:var(--muted)">
         GPS<span class="gps-dot" id="gps-dot"></span>
       </span>
-      <button class="settings-btn" onclick="toggleConfig()">â</button>
+      <button class="settings-btn" onclick="toggleConfig()">⚙</button>
     </div>
   </div>
 
   <!-- CONFIG BANNER -->
   <div class="config-banner" id="config-banner">
-    <strong>â ConfiguraÃ§Ã£o inicial</strong>
+    <strong>⚙ Configuração inicial</strong>
     <label style="font-size:11px;display:block;margin-top:8px">Chave da API Anthropic (Claude)</label>
     <input type="password" id="cfg-anthropic" placeholder="sk-ant-..." />
 
-    <label style="font-size:11px;display:block;margin-top:8px">Google Sheets â ID da planilha</label>
+    <label style="font-size:11px;display:block;margin-top:8px">Google Sheets — ID da planilha</label>
     <input type="text" id="cfg-sheet-id" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms" />
 
     <label style="font-size:11px;display:block;margin-top:8px">Nome da aba de destino</label>
-    <input type="text" id="cfg-sheet-tab" placeholder="ð LanÃ§amentos" value="ð LanÃ§amentos" />
+    <input type="text" id="cfg-sheet-tab" placeholder="📋 Lançamentos" value="📋 Lançamentos" />
 
     <label style="font-size:11px;display:block;margin-top:8px">Google Apps Script URL (Web App)</label>
     <input type="text" id="cfg-gas-url" placeholder="https://script.google.com/macros/s/..." />
 
-    <button class="config-save" onclick="saveConfig()">Salvar configuraÃ§Ã£o</button>
+    <button class="config-save" onclick="saveConfig()">Salvar configuração</button>
     <div style="margin-top:10px;font-size:10px;color:var(--muted);line-height:1.7">
-      ð¡ Veja as instruÃ§Ãµes abaixo para obter a Apps Script URL
+      💡 Veja as instruções abaixo para obter a Apps Script URL
     </div>
   </div>
 
@@ -547,7 +547,7 @@
   <div class="mic-zone">
     <div class="mic-ring" id="mic-ring">
       <button class="mic-btn" id="mic-btn" onclick="toggleRecording()">
-        <span class="mic-icon" id="mic-icon">ð</span>
+        <span class="mic-icon" id="mic-icon">🎙</span>
         <span class="mic-label" id="mic-label">Toque para falar</span>
       </button>
     </div>
@@ -571,7 +571,7 @@
 
   <div class="preview-card" id="preview-card">
     <div class="p-row">
-      <span class="p-label">DescriÃ§Ã£o</span>
+      <span class="p-label">Descrição</span>
       <input class="editable p-value" id="p-desc" type="text" />
     </div>
     <div class="p-row">
@@ -585,7 +585,7 @@
     <div class="p-row">
       <span class="p-label">Tipo</span>
       <select class="editable p-value" id="p-tipo">
-        <option>SaÃ­da</option><option>Entrada</option>
+        <option>Saída</option><option>Entrada</option>
       </select>
     </div>
     <div class="p-row">
@@ -593,12 +593,12 @@
       <input class="editable p-value" id="p-date" type="date" />
     </div>
     <div class="p-row" id="p-loc-row" style="display:none">
-      <span class="p-label">ð Local</span>
-      <span class="p-value loc" id="p-loc">â</span>
+      <span class="p-label">📍 Local</span>
+      <span class="p-value loc" id="p-loc">—</span>
     </div>
     <div class="preview-actions">
-      <button class="btn-confirm" id="btn-confirm" onclick="confirmEntry()">â Salvar no Sheets</button>
-      <button class="btn-discard" onclick="discardEntry()">â</button>
+      <button class="btn-confirm" id="btn-confirm" onclick="confirmEntry()">✓ Salvar no Sheets</button>
+      <button class="btn-discard" onclick="discardEntry()">✕</button>
     </div>
   </div>
 
@@ -607,8 +607,8 @@
   <div class="history-scroll">
     <div class="history-list" id="history-list">
       <div class="empty-state">
-        <span class="big">ð</span>
-        Nenhum lanÃ§amento ainda.<br>Toque no microfone e fale!
+        <span class="big">🎙</span>
+        Nenhum lançamento ainda.<br>Toque no microfone e fale!
       </div>
     </div>
   </div>
@@ -619,35 +619,35 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ââ CONFIG âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CONFIG ─────────────────────────────────────────────────────────────────
 const CATEGORIAS = [
-  "SalÃ¡rio","Saldo Anterior","Rendimentos","Aluguel (Rec.)","AuxÃ­lio",
-  "Moradia","Transporte","Lazer","SaÃºde","EducaÃ§Ã£o","Investimentos",
-  "Trabalho","AlimentaÃ§Ã£o - Ifood","AlimentaÃ§Ã£o - Supermercado",
-  "AlimentaÃ§Ã£o - Restaurantes","Outros","Presente",
-  "Lazer - Assinaturas","Roupas","Tarifas BancÃ¡rias"
+  "Salário","Saldo Anterior","Rendimentos","Aluguel (Rec.)","Auxílio",
+  "Moradia","Transporte","Lazer","Saúde","Educação","Investimentos",
+  "Trabalho","Alimentação - Ifood","Alimentação - Supermercado",
+  "Alimentação - Restaurantes","Outros","Presente",
+  "Lazer - Assinaturas","Roupas","Tarifas Bancárias"
 ];
 
 const CATEGORY_ICONS = {
-  "SalÃ¡rio":"ð¼","Saldo Anterior":"ð¦","Rendimentos":"ð","Aluguel (Rec.)":"ð ",
-  "AuxÃ­lio":"ð¤","Moradia":"ð¡","Transporte":"ð","Lazer":"ð","SaÃºde":"ð",
-  "EducaÃ§Ã£o":"ð","Investimentos":"ð¹","Trabalho":"ð","AlimentaÃ§Ã£o - Ifood":"ðµ",
-  "AlimentaÃ§Ã£o - Supermercado":"ð","AlimentaÃ§Ã£o - Restaurantes":"ð½",
-  "Outros":"ð¦","Presente":"ð","Lazer - Assinaturas":"ðº","Roupas":"ð",
-  "Tarifas BancÃ¡rias":"ð§"
+  "Salário":"💼","Saldo Anterior":"🏦","Rendimentos":"📈","Aluguel (Rec.)":"🏠",
+  "Auxílio":"🤝","Moradia":"🏡","Transporte":"🚗","Lazer":"🎉","Saúde":"💊",
+  "Educação":"📚","Investimentos":"💹","Trabalho":"👔","Alimentação - Ifood":"🛵",
+  "Alimentação - Supermercado":"🛒","Alimentação - Restaurantes":"🍽",
+  "Outros":"📦","Presente":"🎁","Lazer - Assinaturas":"📺","Roupas":"👗",
+  "Tarifas Bancárias":"🏧"
 };
 
 function getCfg(k){ return localStorage.getItem('gasto_'+k)||''; }
 function setCfg(k,v){ localStorage.setItem('gasto_'+k,v); }
 
-// ââ STATE ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── STATE ──────────────────────────────────────────────────────────────────
 let isRecording = false;
 let mediaRecorder = null;
 let audioChunks = [];
 let currentCoords = null;
 let entries = JSON.parse(localStorage.getItem('gasto_entries')||'[]');
 
-// ââ INIT âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── INIT ───────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   // Date
   const now = new Date();
@@ -677,7 +677,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderHistory();
 });
 
-// ââ GPS ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── GPS ────────────────────────────────────────────────────────────────────
 function startGPS() {
   if (!navigator.geolocation) return;
   navigator.geolocation.watchPosition(
@@ -690,14 +690,14 @@ function startGPS() {
   );
 }
 
-// ââ CONFIG âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CONFIG ─────────────────────────────────────────────────────────────────
 function toggleConfig() {
   const b = document.getElementById('config-banner');
   b.classList.toggle('show');
   if (b.classList.contains('show')) {
     document.getElementById('cfg-anthropic').value = getCfg('anthropic');
     document.getElementById('cfg-sheet-id').value  = getCfg('sheet_id');
-    document.getElementById('cfg-sheet-tab').value = getCfg('sheet_tab') || 'ð LanÃ§amentos';
+    document.getElementById('cfg-sheet-tab').value = getCfg('sheet_tab') || '📋 Lançamentos';
     document.getElementById('cfg-gas-url').value   = getCfg('gas_url');
   }
 }
@@ -707,36 +707,76 @@ function saveConfig() {
   setCfg('sheet_tab',  document.getElementById('cfg-sheet-tab').value.trim());
   setCfg('gas_url',    document.getElementById('cfg-gas-url').value.trim());
   document.getElementById('config-banner').classList.remove('show');
-  showToast('ConfiguraÃ§Ã£o salva â', 'success');
+  showToast('Configuração salva ✓', 'success');
 }
 
-// ââ RECORDING âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-async function toggleRecording() {
-  if (isRecording) { stopRecording(); return; }
+// ── RECORDING ─────────────────────────────────────────────────────────────
+// ── RECORDING — direto para SpeechRecognition (Safari/iPhone) ─────────────
+let recognition = null;
+
+function toggleRecording() {
   const apiKey = getCfg('anthropic');
   if (!apiKey) { toggleConfig(); showToast('Configure a API key primeiro', 'info'); return; }
 
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorder = new MediaRecorder(stream, { mimeType: getSupportedMimeType() });
-    audioChunks = [];
-    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
-    mediaRecorder.onstop = () => { stream.getTracks().forEach(t => t.stop()); processAudio(); };
-    mediaRecorder.start(100);
+  // Se já está ouvindo, para
+  if (isRecording) {
+    if (recognition) recognition.stop();
+    return;
+  }
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    showManualInput();
+    return;
+  }
+
+  recognition = new SpeechRecognition();
+  recognition.lang = 'pt-BR';
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+  recognition.continuous = false;
+
+  recognition.onstart = () => {
     isRecording = true;
     setRecordingUI(true);
+  };
+
+  recognition.onresult = async (event) => {
+    const transcript = event.results[0][0].transcript;
+    isRecording = false;
+    setProcessingUI();
+    await sendToClaudeForParsing(transcript);
+  };
+
+  recognition.onerror = (event) => {
+    isRecording = false;
+    resetMicUI();
+    if (event.error === 'not-allowed') {
+      showToast('Permita o microfone nas configurações do Safari', 'error');
+    } else if (event.error === 'no-speech') {
+      showToast('Nada detectado. Tente falar mais alto.', 'info');
+    } else {
+      showToast('Erro: ' + event.error + '. Tente novamente.', 'error');
+    }
+    document.getElementById('status-area').innerHTML =
+      '<p class="status-hint">Diga algo como:<br><em>"gastei 45 reais no iFood"</em></p>';
+  };
+
+  recognition.onend = () => {
+    isRecording = false;
+    // Se não entrou em onresult nem onerror ainda (ex: parou sozinho sem fala),
+    // reseta UI silenciosamente
+    const btn = document.getElementById('mic-btn');
+    if (btn.classList.contains('recording')) resetMicUI();
+  };
+
+  try {
+    recognition.start();
   } catch(e) {
-    showToast('Microfone nÃ£o permitido', 'error');
+    isRecording = false;
+    resetMicUI();
+    showToast('Não foi possível iniciar o microfone.', 'error');
   }
-}
-
-function stopRecording() {
-  if (mediaRecorder && isRecording) { mediaRecorder.stop(); isRecording = false; }
-}
-
-function getSupportedMimeType() {
-  const types = ['audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus','audio/mp4'];
-  return types.find(t => MediaRecorder.isTypeSupported(t)) || '';
 }
 
 function setRecordingUI(recording) {
@@ -748,8 +788,8 @@ function setRecordingUI(recording) {
   btn.classList.toggle('recording', recording);
   ring.classList.toggle('active', recording);
   wf.classList.toggle('active', recording);
-  icon.textContent  = recording ? 'â¹' : 'ð';
-  lbl.textContent   = recording ? 'Toque para parar' : 'Toque para falar';
+  icon.textContent = recording ? '⏹' : '🎙';
+  lbl.textContent  = recording ? 'Toque para parar' : 'Toque para falar';
 }
 
 function setProcessingUI() {
@@ -757,10 +797,12 @@ function setProcessingUI() {
   const icon = document.getElementById('mic-icon');
   const lbl  = document.getElementById('mic-label');
   const wf   = document.getElementById('waveform');
-  btn.classList.remove('recording'); btn.classList.add('processing');
+  btn.classList.remove('recording');
+  btn.classList.add('processing');
   document.getElementById('mic-ring').classList.remove('active');
   wf.classList.remove('active');
-  icon.textContent = 'â³'; lbl.textContent = 'Interpretandoâ¦';
+  icon.textContent = '⏳';
+  lbl.textContent  = 'Interpretando…';
 }
 
 function resetMicUI() {
@@ -768,85 +810,11 @@ function resetMicUI() {
   const icon = document.getElementById('mic-icon');
   const lbl  = document.getElementById('mic-label');
   btn.classList.remove('recording','processing');
-  icon.textContent = 'ð'; lbl.textContent = 'Toque para falar';
+  icon.textContent = '🎙';
+  lbl.textContent  = 'Toque para falar';
 }
 
-// ââ PROCESS AUDIO â CLAUDE âââââââââââââââââââââââââââââââââââââââââââââââââ
-async function processAudio() {
-  setProcessingUI();
-  document.getElementById('status-area').innerHTML =
-    '<p class="status-hint">ð§  Interpretando sua falaâ¦</p>';
-
-  const blob = new Blob(audioChunks, { type: audioChunks[0]?.type || 'audio/webm' });
-
-  try {
-    // Transcribe via Web Speech API fallback / or use Whisper if available
-    // Since we can't call Whisper directly without server, we use SpeechRecognition
-    // for transcription and then send text to Claude
-    throw new Error('use_speech_recognition');
-  } catch(e) {
-    // Use Web Speech API for transcription on iPhone
-    useSpeechRecognitionFlow();
-  }
-}
-
-// ââ WEB SPEECH RECOGNITION (iPhone Safari native) âââââââââââââââââââââââââ
-function useSpeechRecognitionFlow() {
-  resetMicUI();
-  document.getElementById('status-area').innerHTML =
-    '<p class="status-hint">Toque e <em>fale</em> â o iPhone vai transcrever</p>';
-
-  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    // Fallback: manual text input
-    showManualInput();
-    return;
-  }
-
-  const recognition = new SpeechRecognition();
-  recognition.lang = 'pt-BR';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-
-  const btn = document.getElementById('mic-btn');
-  const icon = document.getElementById('mic-icon');
-  const lbl  = document.getElementById('mic-label');
-  const ring = document.getElementById('mic-ring');
-  const wf   = document.getElementById('waveform');
-
-  btn.classList.add('recording');
-  ring.classList.add('active');
-  wf.classList.add('active');
-  icon.textContent = 'â¹'; lbl.textContent = 'Ouvindoâ¦';
-
-  // Override click to stop
-  btn.onclick = () => { recognition.stop(); btn.onclick = toggleRecording; };
-
-  recognition.onresult = async (event) => {
-    const transcript = event.results[0][0].transcript;
-    resetMicUI();
-    btn.onclick = toggleRecording;
-    await sendToClaudeForParsing(transcript);
-  };
-
-  recognition.onerror = () => {
-    resetMicUI();
-    btn.onclick = toggleRecording;
-    showToast('NÃ£o consegui ouvir. Tente novamente.', 'error');
-    document.getElementById('status-area').innerHTML =
-      '<p class="status-hint">Diga algo como:<br><em>"gastei 45 reais no iFood"</em></p>';
-  };
-
-  recognition.onend = () => {
-    btn.classList.remove('recording');
-    ring.classList.remove('active');
-    wf.classList.remove('active');
-  };
-
-  recognition.start();
-}
-
-// ââ MANUAL INPUT FALLBACK ââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── MANUAL INPUT FALLBACK ──────────────────────────────────────────────────
 function showManualInput() {
   document.getElementById('status-area').innerHTML = `
     <div style="width:100%">
@@ -860,7 +828,7 @@ function showManualInput() {
       <button onclick="sendManual()" style="width:100%;margin-top:8px;
         background:var(--green);color:var(--bg);border:none;border-radius:10px;
         padding:10px;font-family:var(--font-display);font-weight:800;font-size:13px;cursor:pointer">
-        Interpretar â
+        Interpretar →
       </button>
     </div>`;
   setTimeout(() => document.getElementById('manual-input')?.focus(), 100);
@@ -870,43 +838,43 @@ async function sendManual() {
   if (!input || !input.value.trim()) return;
   const text = input.value.trim();
   document.getElementById('status-area').innerHTML =
-    '<p class="status-hint">ð§  Interpretandoâ¦</p>';
+    '<p class="status-hint">🧠 Interpretando…</p>';
   await sendToClaudeForParsing(text);
 }
 
-// ââ CLAUDE PARSING âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CLAUDE PARSING ─────────────────────────────────────────────────────────
 async function sendToClaudeForParsing(transcript) {
   const apiKey = getCfg('anthropic');
   const today  = new Date().toISOString().split('T')[0];
 
   document.getElementById('status-area').innerHTML =
-    `<p class="status-hint">ð§  Interpretando: <em>"${transcript}"</em>â¦</p>`;
+    `<p class="status-hint">🧠 Interpretando: <em>"${transcript}"</em>…</p>`;
 
-  const systemPrompt = `VocÃª Ã© um assistente de controle financeiro pessoal brasileiro.
-O usuÃ¡rio vai dizer algo sobre um gasto ou recebimento.
-Extraia as informaÃ§Ãµes e retorne APENAS um JSON vÃ¡lido (sem markdown, sem explicaÃ§Ã£o) com:
+  const systemPrompt = `Você é um assistente de controle financeiro pessoal brasileiro.
+O usuário vai dizer algo sobre um gasto ou recebimento.
+Extraia as informações e retorne APENAS um JSON válido (sem markdown, sem explicação) com:
 {
-  "descricao": "descriÃ§Ã£o resumida",
+  "descricao": "descrição resumida",
   "valor": 0.00,
   "categoria": "uma das categorias abaixo",
-  "tipo": "SaÃ­da ou Entrada",
+  "tipo": "Saída ou Entrada",
   "data": "YYYY-MM-DD"
 }
 
-Categorias disponÃ­veis: ${CATEGORIAS.join(', ')}
+Categorias disponíveis: ${CATEGORIAS.join(', ')}
 
 Regras:
-- Se nÃ£o mencionar data, use hoje: ${today}
-- valor sempre nÃºmero positivo
-- tipo "Entrada" apenas para salÃ¡rio/recebimento/renda
-- Escolha a categoria mais especÃ­fica possÃ­vel
-- descricao: mÃ¡ximo 40 caracteres, capitalize a primeira letra
-- Se o usuÃ¡rio disser "ifood", "delivery", "rappi" â "AlimentaÃ§Ã£o - Ifood"
-- "gasolina", "combustÃ­vel", "posto", "pedÃ¡gio", "estacionamento", "Uber", "99", "Ã´nibus" â "Transporte"
-- "netflix", "spotify", "prime", "youtube premium", "apple", "icloud" â "Lazer - Assinaturas"
-- "mercado", "supermercado" â "AlimentaÃ§Ã£o - Supermercado"
-- "farmÃ¡cia", "remÃ©dio", "mÃ©dico", "consulta" â "SaÃºde"
-- "aluguel", "condomÃ­nio", "iptu", "luz", "Ã¡gua", "internet", "claro", "vivo" â "Moradia"`;
+- Se não mencionar data, use hoje: ${today}
+- valor sempre número positivo
+- tipo "Entrada" apenas para salário/recebimento/renda
+- Escolha a categoria mais específica possível
+- descricao: máximo 40 caracteres, capitalize a primeira letra
+- Se o usuário disser "ifood", "delivery", "rappi" → "Alimentação - Ifood"
+- "gasolina", "combustível", "posto", "pedágio", "estacionamento", "Uber", "99", "ônibus" → "Transporte"
+- "netflix", "spotify", "prime", "youtube premium", "apple", "icloud" → "Lazer - Assinaturas"
+- "mercado", "supermercado" → "Alimentação - Supermercado"
+- "farmácia", "remédio", "médico", "consulta" → "Saúde"
+- "aluguel", "condomínio", "iptu", "luz", "água", "internet", "claro", "vivo" → "Moradia"`;
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -940,12 +908,12 @@ Regras:
   }
 }
 
-// ââ PREVIEW ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── PREVIEW ────────────────────────────────────────────────────────────────
 function showPreview(data) {
   document.getElementById('p-desc').value  = data.descricao || '';
   document.getElementById('p-value').value = data.valor     || '';
   document.getElementById('p-date').value  = data.data      || new Date().toISOString().split('T')[0];
-  document.getElementById('p-tipo').value  = data.tipo      || 'SaÃ­da';
+  document.getElementById('p-tipo').value  = data.tipo      || 'Saída';
 
   const sel = document.getElementById('p-cat');
   for (let o of sel.options) if (o.value === data.categoria) { sel.value = data.categoria; break; }
@@ -970,7 +938,7 @@ function discardEntry() {
     '<p class="status-hint">Diga algo como:<br><em>"gastei 45 reais no iFood"</em></p>';
 }
 
-// ââ CONFIRM & SEND TO SHEETS âââââââââââââââââââââââââââââââââââââââââââââââ
+// ── CONFIRM & SEND TO SHEETS ───────────────────────────────────────────────
 async function confirmEntry() {
   const entry = {
     data:      document.getElementById('p-date').value,
@@ -986,7 +954,7 @@ async function confirmEntry() {
 
   const btn = document.getElementById('btn-confirm');
   btn.classList.add('loading');
-  btn.textContent = 'â³ Enviandoâ¦';
+  btn.textContent = '⏳ Enviando…';
 
   // Add to local history immediately
   entry.status = 'pending';
@@ -1001,7 +969,7 @@ async function confirmEntry() {
     entry.status = 'error';
     saveEntries(); renderHistory();
     showToast('Configure o Apps Script URL', 'info');
-    btn.classList.remove('loading'); btn.textContent = 'â Salvar no Sheets';
+    btn.classList.remove('loading'); btn.textContent = '✓ Salvar no Sheets';
     return;
   }
 
@@ -1023,7 +991,7 @@ async function confirmEntry() {
     setTimeout(() => {
       entry.status = 'synced';
       saveEntries(); renderHistory();
-      showToast('Salvo no Google Sheets â', 'success');
+      showToast('Salvo no Google Sheets ✓', 'success');
     }, 1500);
 
   } catch(e) {
@@ -1033,32 +1001,32 @@ async function confirmEntry() {
   }
 
   btn.classList.remove('loading');
-  btn.textContent = 'â Salvar no Sheets';
+  btn.textContent = '✓ Salvar no Sheets';
 }
 
 function getMesFromDate(dateStr) {
-  const meses = ["Janeiro","Fevereiro","MarÃ§o","Abril","Maio","Junho",
+  const meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
                  "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
   return meses[new Date(dateStr + 'T12:00:00').getMonth()];
 }
 
-// ââ RENDER HISTORY âââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── RENDER HISTORY ─────────────────────────────────────────────────────────
 function renderHistory() {
   const list = document.getElementById('history-list');
   if (!entries.length) {
     list.innerHTML = `<div class="empty-state">
-      <span class="big">ð</span>
-      Nenhum lanÃ§amento ainda.<br>Toque no microfone e fale!
+      <span class="big">🎙</span>
+      Nenhum lançamento ainda.<br>Toque no microfone e fale!
     </div>`;
     return;
   }
 
   list.innerHTML = entries.slice(0, 20).map(e => {
-    const icon    = CATEGORY_ICONS[e.categoria] || 'ð¦';
+    const icon    = CATEGORY_ICONS[e.categoria] || '📦';
     const amount  = `R$ ${Math.abs(e.valor).toFixed(2).replace('.',',')}`;
     const isInc   = e.tipo === 'Entrada';
     const dateStr = new Date(e.data+'T12:00:00').toLocaleDateString('pt-BR',{day:'2-digit',month:'short'});
-    const locBadge = (e.lat && e.lng) ? `<span class="loc-badge">ð</span>` : '';
+    const locBadge = (e.lat && e.lng) ? `<span class="loc-badge">📍</span>` : '';
     const statusClass = e.status || 'pending';
     return `
     <div class="entry-card">
@@ -1071,7 +1039,7 @@ function renderHistory() {
           ${locBadge}
         </div>
       </div>
-      <div class="entry-amount ${isInc?'income':'expense'}">${isInc?'+':'â'} ${amount}</div>
+      <div class="entry-amount ${isInc?'income':'expense'}">${isInc?'+':'−'} ${amount}</div>
       <div class="entry-status ${statusClass}" title="${statusClass}"></div>
     </div>`;
   }).join('');
@@ -1081,7 +1049,7 @@ function saveEntries() {
   localStorage.setItem('gasto_entries', JSON.stringify(entries.slice(0,100)));
 }
 
-// ââ TOAST ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// ── TOAST ──────────────────────────────────────────────────────────────────
 function showToast(msg, type='info') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -1093,43 +1061,43 @@ function showToast(msg, type='info') {
 <!-- SETUP INSTRUCTIONS (hidden by default, shown when config open) -->
 <div style="display:none" id="instructions">
 <!--
-ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-â         INSTRUÃÃES â GOOGLE APPS SCRIPT                      â
-â âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ£
-â                                                              â
-â  1. Abra sua planilha no Google Sheets                       â
-â  2. ExtensÃµes â Apps Script                                  â
-â  3. Cole o cÃ³digo abaixo no editor                           â
-â  4. Salve â Implantar â Novo ImplantaÃ§Ã£o                     â
-â     Tipo: Web App                                            â
-â     Executar como: Eu mesmo                                  â
-â     Acesso: Qualquer pessoa                                  â
-â  5. Copie a URL gerada â cole em "Apps Script URL" no app    â
-â                                                              â
-â âââ CÃDIGO DO APPS SCRIPT âââââââââââââââââââââââââââââââââââ
-â                                                              â
-â function doPost(e) {                                         â
-â   const ss  = SpreadsheetApp.getActiveSpreadsheet();         â
-â   const tab  = e.parameter.tab || 'ð LanÃ§amentos';          â
-â   const sheet = ss.getSheetByName(tab)                       â
-â              || ss.getSheets()[0];                           â
-â   const row = [                                              â
-â     e.parameter.data,                                        â
-â     e.parameter.descricao,                                   â
-â     e.parameter.categoria,                                   â
-â     parseFloat(e.parameter.valor)||0,                        â
-â     e.parameter.tipo,                                        â
-â     e.parameter.mes,                                         â
-â     e.parameter.lat||'',                                     â
-â     e.parameter.lng||''                                      â
-â   ];                                                         â
-â   sheet.appendRow(row);                                      â
-â   return ContentService                                      â
-â     .createTextOutput('ok')                                  â
-â     .setMimeType(ContentService.MimeType.TEXT);              â
-â }                                                            â
-â                                                              â
-ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+╔══════════════════════════════════════════════════════════════╗
+║         INSTRUÇÕES — GOOGLE APPS SCRIPT                      ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  1. Abra sua planilha no Google Sheets                       ║
+║  2. Extensões → Apps Script                                  ║
+║  3. Cole o código abaixo no editor                           ║
+║  4. Salve → Implantar → Novo Implantação                     ║
+║     Tipo: Web App                                            ║
+║     Executar como: Eu mesmo                                  ║
+║     Acesso: Qualquer pessoa                                  ║
+║  5. Copie a URL gerada → cole em "Apps Script URL" no app    ║
+║                                                              ║
+║ ─── CÓDIGO DO APPS SCRIPT ──────────────────────────────────║
+║                                                              ║
+║ function doPost(e) {                                         ║
+║   const ss  = SpreadsheetApp.getActiveSpreadsheet();         ║
+║   const tab  = e.parameter.tab || '📋 Lançamentos';          ║
+║   const sheet = ss.getSheetByName(tab)                       ║
+║              || ss.getSheets()[0];                           ║
+║   const row = [                                              ║
+║     e.parameter.data,                                        ║
+║     e.parameter.descricao,                                   ║
+║     e.parameter.categoria,                                   ║
+║     parseFloat(e.parameter.valor)||0,                        ║
+║     e.parameter.tipo,                                        ║
+║     e.parameter.mes,                                         ║
+║     e.parameter.lat||'',                                     ║
+║     e.parameter.lng||''                                      ║
+║   ];                                                         ║
+║   sheet.appendRow(row);                                      ║
+║   return ContentService                                      ║
+║     .createTextOutput('ok')                                  ║
+║     .setMimeType(ContentService.MimeType.TEXT);              ║
+║ }                                                            ║
+║                                                              ║
+╚══════════════════════════════════════════════════════════════╝
 -->
 </div>
 
