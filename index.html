@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Gasto Rápido">
+<title>Gasto Rápido</title>
+<style>
+:root{--bg:#0a0a0f;--s:#12121a;--s2:#1a1a28;--b:#2a2a40;--g:#00e5a0;--r:#ff4d6d;--y:#ffd166;--bl:#4cc9f0;--t:#e8e8f0;--m:#6b6b8a}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--t);font-family:system-ui,sans-serif;min-height:100dvh;padding:env(safe-area-inset-top,0) 16px env(safe-area-inset-bottom,24px)}
+.wrap{max-width:420px;margin:0 auto}
+
+/* header */
+.hdr{display:flex;justify-content:space-between;align-items:center;padding:18px 0 14px}
+.logo{font-size:17px;font-weight:800;color:var(--g)}
+.logo span{color:var(--m)}
+.gear{background:none;border:none;color:var(--m);font-size:20px;cursor:pointer;padding:4px}
+
+/* cfg */
+.cfg{background:var(--s);border:1px solid var(--y);border-radius:12px;padding:16px;margin-bottom:14px;display:none}
+.cfg.on{display:block}
+.cfg label{display:block;font-size:11px;color:var(--y);margin:10px 0 4px}
+.cfg label:first-of-type{margin-top:0}
+.cfg input{width:100%;background:var(--bg);border:1px solid var(--b);border-radius:8px;color:var(--t);padding:9px 12px;font-size:13px;outline:none}
+.cfg input:focus{border-color:var(--y)}
+.cfg .hint{font-size:11px;color:var(--m);margin-top:10px;line-height:1.7}
+.cfg .hint code{display:block;background:var(--bg);border-radius:6px;padding:8px;color:var(--g);font-size:10px;margin:6px 0;white-space:pre;overflow-x:auto;font-family:monospace}
+.btn-y{width:100%;margin-top:10px;background:var(--y);color:var(--bg);border:none;border-radius:8px;padding:11px;font-weight:800;font-size:13px;cursor:pointer}
+
+/* input */
+.lbl{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--m);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.lbl::after{content:'';flex:1;height:1px;background:var(--b)}
+textarea{width:100%;background:var(--s);border:1.5px solid var(--b);border-radius:12px;color:var(--t);padding:14px;font-size:15px;line-height:1.6;resize:none;outline:none;min-height:90px;font-family:inherit}
+textarea:focus{border-color:var(--g)}
+textarea::placeholder{color:var(--m)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:var(--s2);border:1px solid var(--b);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--m);cursor:pointer}
+.chip:hover{border-color:var(--g);color:var(--g)}
+.btn-g{width:100%;margin-top:12px;background:var(--g);color:var(--bg);border:none;border-radius:12px;padding:15px;font-weight:800;font-size:15px;cursor:pointer}
+.btn-g:disabled{opacity:.4;pointer-events:none}
+
+/* preview */
+.preview{background:var(--s);border:1px solid var(--b);border-radius:16px;padding:18px;display:none;margin-top:14px}
+.preview.on{display:block;animation:up .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes up{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--b)}
+.row:last-of-type{border:none}
+.rl{font-size:10px;color:var(--m);text-transform:uppercase;letter-spacing:.1em}
+.rf{background:transparent;border:none;border-bottom:1px dashed var(--b);color:var(--t);font-size:13px;font-weight:600;text-align:right;outline:none;max-width:200px;font-family:inherit}
+.rf:focus{border-bottom-color:var(--g)}
+.rf.money{color:var(--g);font-size:17px}
+.rf.cat{color:var(--bl)}
+select.rf{cursor:pointer;-webkit-appearance:none}
+.actions{display:flex;gap:10px;margin-top:14px}
+.btn-confirm{flex:1;background:var(--g);color:var(--bg);border:none;border-radius:10px;padding:13px;font-weight:800;font-size:13px;cursor:pointer}
+.btn-confirm:disabled{opacity:.5;pointer-events:none}
+.btn-x{width:46px;background:var(--s2);border:1px solid var(--b);border-radius:10px;color:var(--m);cursor:pointer;font-size:20px}
+
+/* log */
+.log-toggle{background:none;border:1px solid #3a3a00;border-radius:6px;padding:3px 10px;font-size:11px;color:var(--y);cursor:pointer;margin-top:12px}
+.log-box{background:#0d0d00;border:1px solid var(--y);border-radius:10px;padding:12px;margin-top:8px;height:150px;overflow-y:scroll;-webkit-overflow-scrolling:touch;display:none}
+.log-box.on{display:block}
+.ll{font-size:12px;color:var(--y);line-height:2;word-break:break-all;border-bottom:1px solid #1a1a00;font-family:monospace}
+.ll.ok{color:var(--g)}.ll.err{color:var(--r)}.ll.d{color:var(--m)}
+
+/* history */
+.sec{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--m);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.sec::after{content:'';flex:1;height:1px;background:var(--b)}
+.hist{display:flex;flex-direction:column;gap:7px;padding-bottom:20px}
+.entry{background:var(--s);border:1px solid var(--b);border-radius:12px;padding:11px 13px;display:flex;align-items:center;gap:10px;animation:si .25s ease-out}
+@keyframes si{from{transform:translateX(-8px);opacity:0}to{transform:none;opacity:1}}
+.ico{width:34px;height:34px;border-radius:9px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.eb{flex:1;min-width:0}
+.ed{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.em{font-size:10px;color:var(--m);margin-top:2px;display:flex;gap:6px;font-family:monospace}
+.badge{color:var(--bl);background:rgba(76,201,240,.1);padding:1px 5px;border-radius:4px}
+.ev{font-size:13px;font-weight:500;flex-shrink:0;font-family:monospace}
+.ev.out{color:var(--r)}.ev.in{color:var(--g)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot.synced{background:var(--g)}.dot.pending{background:var(--y)}.dot.error{background:var(--r)}
+.empty{text-align:center;padding:28px 0;font-size:12px;color:var(--m);line-height:2.2;font-family:monospace}
+
+/* toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--s2);border:1px solid var(--b);border-radius:10px;padding:11px 20px;font-size:13px;font-weight:700;white-space:nowrap;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;pointer-events:none;opacity:0;z-index:999}
+.toast.on{transform:translateX(-50%) translateY(0);opacity:1}
+.toast.ok{border-color:var(--g);color:var(--g)}.toast.err{border-color:var(--r);color:var(--r)}.toast.tip{border-color:var(--y);color:var(--y)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="logo">Gasto <span>/</span> Rápido</div>
+    <button class="gear" onclick="toggleCfg()">⚙</button>
+  </div>
+
+  <div class="cfg" id="cfg">
+    <label>Chave API Gemini</label>
+    <input id="c-key" type="text" placeholder="AIzaSy...">
+    <label>URL do Google Apps Script</label>
+    <input id="c-gas" type="text" placeholder="https://script.google.com/macros/s/...">
+    <label>Nome da aba</label>
+    <input id="c-tab" type="text" placeholder="📋 Lançamentos">
+    <div class="hint">
+      <strong style="color:var(--y)">Código do Apps Script:</strong>
+      <code>function doPost(e) {
+  const sh = SpreadsheetApp
+    .getActiveSpreadsheet()
+    .getSheetByName(e.parameter.tab)
+    || SpreadsheetApp.getActiveSpreadsheet()
+       .getSheets()[0];
+  sh.appendRow([e.parameter.data,
+    e.parameter.descricao, e.parameter.categoria,
+    parseFloat(e.parameter.valor)||0,
+    e.parameter.tipo, e.parameter.mes]);
+  return ContentService.createTextOutput('ok');
+}</code>
+      Implantar → Web App → Qualquer pessoa → copiar URL
+    </div>
+    <button class="btn-y" onclick="salvarCfg()">✓ Salvar configuração</button>
+  </div>
+
+  <div class="lbl">Novo lançamento</div>
+  <textarea id="txt" rows="3" placeholder="Ex: almocei no japonês 85&#10;gasolina 150&#10;recebi salário 4500"></textarea>
+  <div class="chips">
+    <span class="chip" onclick="fill('iFood 45')">🛵 iFood</span>
+    <span class="chip" onclick="fill('gasolina 150')">⛽ Gasolina</span>
+    <span class="chip" onclick="fill('mercado 230')">🛒 Mercado</span>
+    <span class="chip" onclick="fill('farmácia 35')">💊 Farmácia</span>
+    <span class="chip" onclick="fill('salário 5000')">💼 Salário</span>
+  </div>
+  <button class="btn-g" id="btn-int" onclick="interpretar()">✦ Interpretar</button>
+
+  <div class="preview" id="preview">
+    <div class="row"><span class="rl">Descrição</span><input class="rf" id="p-desc" type="text"></div>
+    <div class="row"><span class="rl">Valor R$</span><input class="rf money" id="p-val" type="number" step="0.01"></div>
+    <div class="row"><span class="rl">Categoria</span><select class="rf cat" id="p-cat"></select></div>
+    <div class="row"><span class="rl">Tipo</span><select class="rf" id="p-tipo"><option>Saída</option><option>Entrada</option></select></div>
+    <div class="row"><span class="rl">Data</span><input class="rf" id="p-date" type="date"></div>
+    <div class="actions">
+      <button class="btn-confirm" id="btn-ok" onclick="confirmar()">✓ Salvar na planilha</button>
+      <button class="btn-x" onclick="cancelar()">✕</button>
+    </div>
+  </div>
+
+  <button class="log-toggle" onclick="document.getElementById('log').classList.toggle('on')">▸ LOG</button>
+  <div class="log-box" id="log"></div>
+
+  <div class="sec">Histórico</div>
+  <div class="hist" id="hist">
+    <div class="empty">Nenhum lançamento ainda.<br>Digite um gasto acima!</div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+var CATS=["Salário","Saldo Anterior","Rendimentos","Aluguel (Rec.)","Auxílio","Moradia","Transporte","Lazer","Saúde","Educação","Investimentos","Trabalho","Alimentação - Ifood","Alimentação - Supermercado","Alimentação - Restaurantes","Outros","Presente","Lazer - Assinaturas","Roupas","Tarifas Bancárias"];
+var ICONS={"Salário":"💼","Saldo Anterior":"🏦","Rendimentos":"📈","Aluguel (Rec.)":"🏠","Auxílio":"🤝","Moradia":"🏡","Transporte":"🚗","Lazer":"🎉","Saúde":"💊","Educação":"📚","Investimentos":"💹","Trabalho":"👔","Alimentação - Ifood":"🛵","Alimentação - Supermercado":"🛒","Alimentação - Restaurantes":"🍽","Outros":"📦","Presente":"🎁","Lazer - Assinaturas":"📺","Roupas":"👗","Tarifas Bancárias":"🏧"};
+var MESES=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+var entries=[];
+try{entries=JSON.parse(localStorage.getItem("e")||"[]")}catch(e){}
+
+// init
+(function(){
+  var now=new Date();
+  document.getElementById("p-date").value=now.toISOString().split("T")[0];
+  var s=document.getElementById("p-cat");
+  CATS.forEach(function(c){var o=document.createElement("option");o.value=c;o.textContent=c;s.appendChild(o)});
+  var k=localStorage.getItem("k")||"";
+  document.getElementById("c-key").value=k;
+  document.getElementById("c-gas").value=localStorage.getItem("g")||"";
+  document.getElementById("c-tab").value=localStorage.getItem("t")||"📋 Lançamentos";
+  if(!k||!localStorage.getItem("g")) document.getElementById("cfg").classList.add("on");
+  renderHist();
+  log("Pronto ✓ | key:"+(k?"OK":"VAZIO")+" | gas:"+(localStorage.getItem("g")?"OK":"VAZIO"),k&&localStorage.getItem("g")?"ok":"err");
+})();
+
+function L(id){return document.getElementById(id)}
+function log(m,t){var b=L("log"),d=document.createElement("div"),n=new Date().toLocaleTimeString("pt-BR");d.className="ll "+(t||"");d.textContent="["+n+"] "+m;b.appendChild(d);b.scrollTop=b.scrollHeight}
+function toast(m,t){var e=L("toast");e.textContent=m;e.className="toast "+(t||"tip")+" on";setTimeout(function(){e.classList.remove("on")},3000)}
+function toggleCfg(){L("cfg").classList.toggle("on")}
+function fill(v){L("txt").value=v;L("txt").focus()}
+
+function salvarCfg(){
+  var k=L("c-key").value.trim();
+  var g=L("c-gas").value.trim();
+  var t=L("c-tab").value.trim()||"📋 Lançamentos";
+  if(!k){toast("Insira a chave Gemini","err");return}
+  if(!g){toast("Insira a URL do Apps Script","err");return}
+  localStorage.setItem("k",k);
+  localStorage.setItem("g",g);
+  localStorage.setItem("t",t);
+  L("cfg").classList.remove("on");
+  toast("Salvo ✓","ok");
+  log("Config salva | key:"+k.slice(0,8)+"...","ok");
+}
+
+function interpretar(){
+  var txt=L("txt").value.trim();
+  if(!txt){toast("Digite algo","tip");return}
+  var k=localStorage.getItem("k")||"";
+  if(!k){L("cfg").classList.add("on");toast("Configure a chave Gemini","tip");return}
+
+  var btn=L("btn-int");
+  btn.disabled=true;btn.textContent="⏳ Interpretando...";
+  log("Enviando: \""+txt+"\"");
+
+  var today=new Date().toISOString().split("T")[0];
+  var prompt="Analise a frase de finanças pessoais em português e retorne SOMENTE um JSON válido (sem markdown):\n{\"descricao\":\"...\",\"valor\":0.00,\"categoria\":\"...\",\"tipo\":\"Saída\",\"data\":\"YYYY-MM-DD\"}\n\nCategorias: "+CATS.join(", ")+"\n\nRegras:\n- Hoje: "+today+"\n- tipo Entrada só para salário/recebimento\n- ifood/delivery → Alimentação - Ifood\n- gasolina/posto/uber/pedágio → Transporte\n- netflix/spotify/prime/apple → Lazer - Assinaturas\n- mercado/feira/supermercado → Alimentação - Supermercado\n- restaurante/lanche/almoço/jantar/pizza → Alimentação - Restaurantes\n- farmácia/remédio/médico → Saúde\n- aluguel/condomínio/iptu/luz/internet → Moradia\n- descricao: máx 40 chars\n\nFrase: "+txt;
+
+  fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key="+k,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:0.1,maxOutputTokens:300}})
+  })
+  .then(function(r){log("HTTP "+r.status,r.ok?"ok":"err");return r.text()})
+  .then(function(raw){
+    log("Raw: "+raw.slice(0,200));
+    var d=JSON.parse(raw);
+    if(d.error) throw new Error(d.error.message);
+    var j=JSON.parse(d.candidates[0].content.parts[0].text.trim().replace(/```json|```/g,"").trim());
+    log("✓ "+j.descricao+" R$"+j.valor+" | "+j.categoria,"ok");
+    mostrarPreview(j);
+  })
+  .catch(function(e){log("ERRO: "+e.message,"err");toast(e.message,"err")})
+  .finally(function(){btn.disabled=false;btn.textContent="✦ Interpretar"});
+}
+
+function mostrarPreview(j){
+  L("p-desc").value=j.descricao||"";
+  L("p-val").value=j.valor||"";
+  L("p-date").value=j.data||new Date().toISOString().split("T")[0];
+  L("p-tipo").value=j.tipo||"Saída";
+  var s=L("p-cat");
+  for(var i=0;i<s.options.length;i++){if(s.options[i].value===j.categoria){s.selectedIndex=i;break}}
+  L("preview").classList.add("on");
+  L("preview").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function cancelar(){L("preview").classList.remove("on");L("txt").value=""}
+
+function confirmar(){
+  var btn=L("btn-ok");
+  btn.disabled=true;btn.textContent="⏳ Salvando...";
+  var dv=L("p-date").value;
+  var e={id:Math.random().toString(36).slice(2,9),data:dv,descricao:L("p-desc").value,categoria:L("p-cat").value,valor:parseFloat(L("p-val").value)||0,tipo:L("p-tipo").value,mes:MESES[new Date(dv+"T12:00:00").getMonth()],ts:Date.now(),status:"pending"};
+  entries.unshift(e);
+  try{localStorage.setItem("e",JSON.stringify(entries.slice(0,100)))}catch(_){}
+  renderHist();cancelar();
+  btn.disabled=false;btn.textContent="✓ Salvar na planilha";
+  var g=localStorage.getItem("g")||"";
+  if(!g){e.status="error";renderHist();toast("Configure o Apps Script","tip");return}
+  log("Enviando para Sheets...");
+  var body=new URLSearchParams({tab:localStorage.getItem("t")||"📋 Lançamentos",data:e.data,descricao:e.descricao,categoria:e.categoria,valor:e.valor,tipo:e.tipo,mes:e.mes});
+  fetch(g,{method:"POST",body:body,mode:"no-cors"})
+    .then(function(){setTimeout(function(){e.status="synced";renderHist();toast("Salvo ✓","ok");log("Sheets: ok","ok")},1500)})
+    .catch(function(ex){e.status="error";renderHist();log("Sheets erro: "+ex.message,"err");toast("Erro de rede","err")});
+}
+
+function renderHist(){
+  var el=L("hist");
+  if(!entries.length){el.innerHTML='<div class="empty">Nenhum lançamento ainda.<br>Digite um gasto acima!</div>';return}
+  el.innerHTML=entries.slice(0,30).map(function(e){
+    var ico=ICONS[e.categoria]||"📦";
+    var amt="R$ "+Math.abs(e.valor).toFixed(2).replace(".",",");
+    var isIn=e.tipo==="Entrada";
+    var dt=new Date(e.data+"T12:00:00").toLocaleDateString("pt-BR",{day:"2-digit",month:"short"});
+    return '<div class="entry"><div class="ico">'+ico+'</div><div class="eb"><div class="ed">'+e.descricao+'</div><div class="em"><span>'+dt+'</span><span class="badge">'+e.categoria+'</span></div></div><div class="ev '+(isIn?"in":"out")+'">'+(isIn?"+":"−")+" "+amt+'</div><div class="dot '+(e.status||"pending")+'" title="'+(e.status||"pending")+'"></div></div>';
+  }).join("");
+}
+</script>
+</body>
+</html>
